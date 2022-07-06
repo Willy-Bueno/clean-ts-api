@@ -5,5 +5,8 @@ export default {
   testEnvironment: 'jest-environment-node',
   transform: {
     '^.+\\.ts$': 'ts-jest'
+  },
+  moduleNameMapper: {
+    '@/(.*)': '<rootDir>/src/$1'
   }
 }
