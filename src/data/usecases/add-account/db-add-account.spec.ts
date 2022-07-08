@@ -1,8 +1,9 @@
 import { DbAddAccount } from './db-add-account'
+import { Encrypter } from './db-add-account-protocols'
 
 describe('DbAddAccount Usecase', () => {
   const makeEncrypter = (): any => {
-    class EncrypterStub {
+    class EncrypterStub implements Encrypter {
       async encrypt (value: string): Promise<string> {
         return await new Promise(resolve => resolve('hashed_password'))
       }
