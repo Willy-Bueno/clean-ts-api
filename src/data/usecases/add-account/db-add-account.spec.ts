@@ -1,7 +1,16 @@
 import { DbAddAccount } from './db-add-account'
-import { Encrypter } from './db-add-account-protocols'
+import { AccountModel, AddAccountModel, AddAccountRepository, Encrypter } from './db-add-account-protocols'
 
 describe('DbAddAccount Usecase', () => {
+  const makeAddAccountRepository = (): AddAccountRepository => {
+    class AddAccountRepositoryStub implements AddAccountRepository {
+      async add (account: AddAccountModel): Promise<AccountModel> {
+        return await Promise.resolve(null)
+      }
+    }
+    return new AddAccountRepositoryStub()
+  }
+
   const makeEncrypter = (): any => {
     class EncrypterStub implements Encrypter {
       async encrypt (value: string): Promise<string> {
@@ -14,12 +23,18 @@ describe('DbAddAccount Usecase', () => {
   interface SutTypes {
     sut: DbAddAccount
     encrypterStub: any
+    addAccountRepositoryStub: AddAccountRepository
   }
 
   const makeSut = (): SutTypes => {
     const encrypterStub = makeEncrypter()
-    const sut = new DbAddAccount(encrypterStub)
-    return { sut, encrypterStub }
+    const addAccountRepositoryStub = makeAddAccountRepository()
+    const sut = new DbAddAccount(encrypterStub, addAccountRepositoryStub)
+    return {
+      sut,
+      encrypterStub,
+      addAccountRepositoryStub
+    }
   }
 
   test('Should call Encrypter with correct password', async () => {
@@ -46,5 +61,21 @@ describe('DbAddAccount Usecase', () => {
     }
     const promise = sut.add(accountData)
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call AddAccountRepository with correct values', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut()
+    const addtSpy = jest.spyOn(addAccountRepositoryStub, 'add')
+    const accountData = {
+      name: 'valid_name',
+      email: 'valid_email@mail.com',
+      password: 'valid_password'
+    }
+    await sut.add(accountData)
+    expect(addtSpy).toHaveBeenCalledWith({
+      name: 'valid_name',
+      email: 'valid_email@mail.com',
+      password: 'hashed_password'
+    })
   })
 })
