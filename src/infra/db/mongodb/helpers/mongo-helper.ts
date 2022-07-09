@@ -1,4 +1,4 @@
-import { Collection, MongoClient } from 'mongodb'
+import { Collection, MongoClient, WithId, Document, ObjectId } from 'mongodb'
 
 export const MongoHelper = {
   client: null as MongoClient,
@@ -13,5 +13,14 @@ export const MongoHelper = {
 
   async getCollection (name: string): Promise<Collection> {
     return this.client.db().collection(name)
+  },
+
+  async findById (collection: Collection<Document>, id: ObjectId): Promise<WithId<Document>> {
+    return await collection.findOne({ _id: id })
+  },
+
+  map (collection: WithId<Document>): any {
+    const { _id, ...accounWithoutId } = collection
+    return Object.assign({}, accounWithoutId, { id: _id.toHexString() })
   }
 }
