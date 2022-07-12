@@ -6,9 +6,9 @@ class ControllerStub implements Controller {
     const httpResponse: HttpResponse = {
       statusCode: 200,
       body: {
-        name: 'any_name',
-        email: 'any_mail@mail.com',
-        password: 'any_password'
+        name: 'valid_name',
+        email: 'valid_mail@mail.com',
+        password: 'valid_password'
       }
     }
     return await Promise.resolve(httpResponse)
@@ -17,22 +17,22 @@ class ControllerStub implements Controller {
 
 interface SutTypes {
   sut: LogControllerDecorator
-  controllerSpy: Controller
+  controllerStub: Controller
 }
 
 const makeSut = (): SutTypes => {
-  const controllerSpy = new ControllerStub()
-  const sut = new LogControllerDecorator(controllerSpy)
+  const controllerStub = new ControllerStub()
+  const sut = new LogControllerDecorator(controllerStub)
   return {
     sut,
-    controllerSpy
+    controllerStub
   }
 }
 
 describe('LogControllerDecorator', () => {
   test('Should call controller handle', async () => {
-    const { sut, controllerSpy } = makeSut()
-    const handleSpy = jest.spyOn(controllerSpy, 'handle')
+    const { sut, controllerStub } = makeSut()
+    const handleSpy = jest.spyOn(controllerStub, 'handle')
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -43,5 +43,24 @@ describe('LogControllerDecorator', () => {
     }
     await sut.handle(httpRequest)
     expect(handleSpy).toHaveBeenCalledWith(httpRequest)
+  })
+
+  test('Should return the same result of the controller', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_mail@mail.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      name: 'valid_name',
+      email: 'valid_mail@mail.com',
+      password: 'valid_password'
+    })
   })
 })
