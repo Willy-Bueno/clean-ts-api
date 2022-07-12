@@ -14,9 +14,11 @@ export const MongoHelper = {
   },
 
   async getCollection (name: string): Promise<Collection> {
+    /* c8 ignore start */
     if (!this.client) {
       await MongoClient.connect(this.uri)
     }
+    /* c8 ignore end */
     return this.client.db().collection(name)
   },
 
