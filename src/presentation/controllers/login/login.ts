@@ -1,8 +1,10 @@
 import { MissingParamError } from '@/presentation/errors'
 import { badRequest } from '@/presentation/helpers'
-import { Controller, HttpRequest, HttpResponse } from '../signup/signup-protocols'
+import { Controller, EmailValidator, HttpRequest, HttpResponse } from '../signup/signup-protocols'
 
 export class LoginController implements Controller {
+  constructor (private readonly emailValidator: EmailValidator) {}
+
   async handle (request: HttpRequest): Promise<HttpResponse> {
     const requiredFields = ['email', 'password']
     for (const field of requiredFields) {
@@ -10,5 +12,8 @@ export class LoginController implements Controller {
         return badRequest(new MissingParamError(field))
       }
     }
+    const { email } = request.body
+
+    this.emailValidator.isValid(email)
   }
 }
