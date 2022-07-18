@@ -1,5 +1,5 @@
-import { InvalidParamError, MissingParamError } from '@/presentation/errors'
-import { badRequest, ok, serverError, unauthorized } from '@/presentation/helpers'
+import { InvalidParamError, MissingParamError } from '../../errors'
+import { badRequest, ok, serverError, unauthorized } from '../../helpers'
 import { Controller, EmailValidator, HttpRequest, HttpResponse, Authentication } from './login-protocols'
 
 export class LoginController implements Controller {
