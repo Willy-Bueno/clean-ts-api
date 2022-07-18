@@ -2,7 +2,7 @@ import { AddAccount, AddAccountModel } from '@/domain/usecases/add-account/add-a
 import { SignUpController } from '@/presentation/controllers/signup/signup'
 import { MissingParamError, InvalidParamError, ServerError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers'
-import { EmailValidator, AccountModel, HttpRequest } from './signup-protocols'
+import { EmailValidator, AccountModel, HttpRequest, Validation } from './signup-protocols'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -11,6 +11,15 @@ const makeEmailValidator = (): EmailValidator => {
     }
   }
   return new EmailValidatorStub()
+}
+
+const makeValidation = (): Validation => {
+  class ValidationStub implements Validation {
+    validate (input: any): Error {
+      return null
+    }
+  }
+  return new ValidationStub()
 }
 
 const makeFakeAccount = (): AccountModel => ({
@@ -42,15 +51,18 @@ interface SutTypes {
   sut: SignUpController
   emailValidatorStub: EmailValidator
   addAccountStub: AddAccount
+  validationStub: Validation
 }
 
 const makesut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
   const addAccountStub = makeAddAccount()
+  const validationStub = makeValidation()
   return {
     emailValidatorStub,
-    sut: new SignUpController(emailValidatorStub, addAccountStub),
-    addAccountStub
+    sut: new SignUpController(emailValidatorStub, addAccountStub, validationStub),
+    addAccountStub,
+    validationStub
   }
 }
 
@@ -183,5 +195,16 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok(makeFakeAccount()))
+  })
+
+  test('Should call Validation with correct values', async () => {
+    const { sut, validationStub } = makesut()
+
+    const addSpy = jest.spyOn(validationStub, 'validate')
+
+    const httpRequest = makeFakeRequest()
+
+    await sut.handle(makeFakeRequest())
+    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })
