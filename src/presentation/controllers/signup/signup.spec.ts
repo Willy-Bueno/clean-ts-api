@@ -44,7 +44,7 @@ interface SutTypes {
   validationStub: Validation
 }
 
-const makesut = (): SutTypes => {
+const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount()
   const validationStub = makeValidation()
   return {
@@ -56,7 +56,7 @@ const makesut = (): SutTypes => {
 
 describe('SignUp Controller', () => {
   test('Should call AddAccount with correct values', async () => {
-    const { sut, addAccountStub } = makesut()
+    const { sut, addAccountStub } = makeSut()
 
     const addSpy = jest.spyOn(addAccountStub, 'add')
 
@@ -69,7 +69,7 @@ describe('SignUp Controller', () => {
   })
 
   test('Should return 500 if AddAccount throws', async () => {
-    const { sut, addAccountStub } = makesut()
+    const { sut, addAccountStub } = makeSut()
 
     jest.spyOn(addAccountStub, 'add').mockImplementationOnce(async () => {
       return await Promise.reject(new Error())
@@ -80,14 +80,14 @@ describe('SignUp Controller', () => {
   })
 
   test('Should return 200 if valid data is provided', async () => {
-    const { sut } = makesut()
+    const { sut } = makeSut()
 
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok(makeFakeAccount()))
   })
 
   test('Should call Validation with correct values', async () => {
-    const { sut, validationStub } = makesut()
+    const { sut, validationStub } = makeSut()
 
     const addSpy = jest.spyOn(validationStub, 'validate')
 
@@ -98,7 +98,7 @@ describe('SignUp Controller', () => {
   })
 
   test('Should return 400 if validation fails', async () => {
-    const { sut, validationStub } = makesut()
+    const { sut, validationStub } = makeSut()
 
     jest.spyOn(validationStub, 'validate').mockImplementationOnce(() => {
       return new MissingParamError('any_field')
