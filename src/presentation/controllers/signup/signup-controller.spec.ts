@@ -1,8 +1,8 @@
 import { AddAccount, AddAccountModel } from '@/domain/usecases/add-account/add-account'
-import { SignUpController } from '@/presentation/controllers/signup/signup'
+import { SignUpController } from '@/presentation/controllers/signup/signup-controller'
 import { MissingParamError, ServerError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers'
-import { AccountModel, HttpRequest, Validation } from './signup-protocols'
+import { AccountModel, HttpRequest, Validation } from './signup-controller-protocols'
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
