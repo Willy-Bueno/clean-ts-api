@@ -11,8 +11,8 @@ import env from '../../config/env'
 
 export const makeLoginController = (): Controller => {
   const salt = 12
-  const jwtAdapter = new JwtAdapter(env.jwtSecret)
   const bcryptAdapter = new BcryptAdapter(salt)
+  const jwtAdapter = new JwtAdapter(env.jwtSecret)
   const accountByEmailRepository = new AccountMongoRepository()
   const dbAuthentication = new DbAuthentication(accountByEmailRepository, bcryptAdapter, jwtAdapter, accountByEmailRepository)
   const loginController = new LoginController(dbAuthentication, makeLoginValidation())
