@@ -1,23 +1,37 @@
-version: "3.1"
+version: '3.7'
+ 
 services:
-  mongo:
-    container_name: mongo-container
-    image: mongo
-    restart: always
-    volumes:
-      - ./data:/data/db
-    ports:
-      - "27017:27017"
-  api:
-    container_name: api-container
+  app: 
     build: .
-    restart: always
     image: clean-node-api
+    container_name: suvey-api
+    restart: always
     command: npm start
     volumes:
       - ./dist:/usr/src/clean-node-api/dist
     ports:
-      - "5050:5050"
-    links:
+      - 5050:5050
+    depends_on:
       - mongo
-    
+    networks: 
+      - survey-network
+ 
+ 
+  mongo:
+    image: mongo
+    container_name: database-survey
+    restart: always
+    volumes:
+      - data:/data/db
+    ports:
+      - 27017:27017
+    networks: 
+      - survey-network
+ 
+networks: 
+    survey-network:
+      driver: bridge
+ 
+volumes: 
+  data:
+    driver: local
