@@ -2,7 +2,16 @@ import { AddAccount, AddAccountModel } from '@/domain/usecases/add-account/add-a
 import { SignUpController } from '@/presentation/controllers/signup/signup-controller'
 import { MissingParamError, ServerError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers'
-import { AccountModel, HttpRequest, Validation } from './signup-controller-protocols'
+import { AccountModel, Authentication, AuthenticationModel, HttpRequest, Validation } from './signup-controller-protocols'
+
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    async auth (authentication: AuthenticationModel): Promise<string> {
+      return 'any_token'
+    }
+  }
+  return new AuthenticationStub()
+}
 
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
@@ -42,15 +51,18 @@ interface SutTypes {
   sut: SignUpController
   addAccountStub: AddAccount
   validationStub: Validation
+  authenticationStub: Authentication
 }
 
 const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount()
   const validationStub = makeValidation()
+  const authenticationStub = makeAuthentication()
   return {
-    sut: new SignUpController(addAccountStub, validationStub),
+    sut: new SignUpController(addAccountStub, validationStub, authenticationStub),
     addAccountStub,
-    validationStub
+    validationStub,
+    authenticationStub
   }
 }
 
@@ -105,5 +117,15 @@ describe('SignUp Controller', () => {
     })
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
+  })
+
+  test('Should call Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const isValidSpy = jest.spyOn(authenticationStub, 'auth')
+    await sut.handle(makeFakeRequest())
+    expect(isValidSpy).toHaveBeenCalledWith({
+      email: 'any_email@mail.com',
+      password: 'any_password'
+    })
   })
 })
