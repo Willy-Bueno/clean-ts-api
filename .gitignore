@@ -3,5 +3,5 @@ dist
 coverage
 yarn.lock
 yarn-error.log
-data
+!src/data
 .package.json
