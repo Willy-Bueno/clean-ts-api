@@ -1,5 +1,5 @@
+import { Encrypter } from '@/data/usecases/authentication/db-authentication-protocols'
 import jwt from 'jsonwebtoken'
-import { Encrypter } from '../../../../data/usecases/authentication/db-authentication-protocols'
 
 export class JwtAdapter implements Encrypter {
   constructor (private readonly secret: string) {}

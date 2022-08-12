@@ -1,7 +1,7 @@
 import { AddAccountRepository } from '@/data/protocols/db/account/add-account-repository'
+import { AccountModel, AddAccountModel } from './db-add-account-protocols'
 import { Hasher } from '@/data/protocols/security/criptography/hasher'
 import { DbAddAccount } from './db-add-account'
-import { AccountModel, AddAccountModel } from './db-add-account-protocols'
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'valid_id',

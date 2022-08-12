@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken'
 import { Encrypter } from '@/data/usecases/authentication/db-authentication-protocols'
 import { JwtAdapter } from './jwt-adapter'
+import jwt from 'jsonwebtoken'
 
 interface SutTypes {
   sut: Encrypter
