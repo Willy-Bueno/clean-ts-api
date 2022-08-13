@@ -1,6 +1,6 @@
 {
   "name": "clean-node",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "main": "index.js",
   "scripts": {
     "start": "node dist/main/server.js",
@@ -14,7 +14,8 @@
     "test:unit": "yarn test --watch -c jest-unit-config.ts",
     "test:integration": "yarn test --watch -c jest-integration-config.ts",
     "test:staged": "yarn test --findRelatedTests",
-    "test:ci": "yarn test --coverage"
+    "test:ci": "yarn test --coverage",
+    "prepare": "husky install"
   },
   "license": "MIT",
   "devDependencies": {
