@@ -1,5 +1,5 @@
 export interface AnswerModel {
-  image: string
+  image?: string
   answer: string
 }
 
