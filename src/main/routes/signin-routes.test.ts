@@ -1,12 +1,12 @@
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 import { Collection } from 'mongodb'
+import app from '@/main/config/app'
 import request from 'supertest'
-import app from '../config/app'
 import { hash } from 'bcrypt'
 
 let accountCollection: Collection
 
-describe('Login Routes', () => {
+describe('Sigin Routes', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL)
   })
@@ -34,8 +34,8 @@ describe('Login Routes', () => {
     })
   })
 
-  describe('POST /login', () => {
-    test('Should return 200 on login', async () => {
+  describe('POST /signin', () => {
+    test('Should return 200 on signin', async () => {
       const password = await hash('123', 12)
       await accountCollection.insertOne({
         name: 'Willy',
@@ -44,7 +44,7 @@ describe('Login Routes', () => {
       })
 
       await request(app)
-        .post('/api/login')
+        .post('/api/signin')
         .send({
           email: 'willybueno090@gmail.com',
           password: '123'
@@ -52,9 +52,9 @@ describe('Login Routes', () => {
         .expect(200)
     })
 
-    test('Should return 401 on login fails', async () => {
+    test('Should return 401 on signin fails', async () => {
       await request(app)
-        .post('/api/login')
+        .post('/api/signin')
         .send({
           email: 'willybueno090@gmail.com',
           password: '123'

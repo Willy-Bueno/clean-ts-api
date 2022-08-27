@@ -1,6 +1,6 @@
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
+import app from '@/main/config/app'
 import request from 'supertest'
-import app from '../config/app'
 
 describe('SignUp Routes', () => {
   beforeAll(async () => {
