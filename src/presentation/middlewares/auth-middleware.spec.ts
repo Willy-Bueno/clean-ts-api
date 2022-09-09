@@ -37,11 +37,7 @@ const makeSut = (): SutTypes => {
 describe('Auth Middleware', () => {
   test('Should return 403 if no x-acess-token exists in header', async () => {
     const { sut } = makeSut()
-    const httpResponse = await sut.handle({
-      headers: {
-        'x-access-token': ''
-      }
-    })
+    const httpResponse = await sut.handle({})
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
   })
 
