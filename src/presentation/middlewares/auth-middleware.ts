@@ -6,7 +6,10 @@ import { LoadAccountByToken } from '@/domain/usecases/add-account/add-account-by
 export class AuthMiddleware implements Middleware {
   constructor (private readonly loadAccountByToken: LoadAccountByToken) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    this.loadAccountByToken.load(httpRequest.headers?.['x-access-token'])
+    const accessToken = httpRequest.headers?.['x-access-token']
+    if (accessToken) {
+      await this.loadAccountByToken.load(accessToken)
+    }
     return forbidden(new AccessDeniedError())
   }
 }
