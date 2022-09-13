@@ -1,10 +1,11 @@
 import { AddSurveyModel } from '@/domain/usecases/add-survey/add-survey'
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
-import { Collection } from 'mongodb'
 import app from '@/main/config/app'
+import { Collection } from 'mongodb'
 import request from 'supertest'
 
-let surveyCollection: Collection
+let accountCollection: Collection
+let surveysCollection: Collection
 
 const makeFakeSurvey = (): AddSurveyModel => ({
   question: 'Question',
@@ -26,16 +27,18 @@ describe('Surveys Routes', () => {
   })
 
   beforeEach(async () => {
-    surveyCollection = await MongoHelper.getCollection('surveys')
-    await surveyCollection.deleteMany({})
+    accountCollection = await MongoHelper.getCollection('accounts')
+    surveysCollection = await MongoHelper.getCollection('surveys')
+    await accountCollection.deleteMany({})
+    await surveysCollection.deleteMany({})
   })
 
   describe('POST /surveys', () => {
-    test('Should return 204 on add survey', async () => {
+    test('Should return 403 on add survey without accessToken', async () => {
       await request(app)
         .post('/api/surveys')
         .send(makeFakeSurvey())
-        .expect(204)
+        .expect(403)
     })
   })
 })
