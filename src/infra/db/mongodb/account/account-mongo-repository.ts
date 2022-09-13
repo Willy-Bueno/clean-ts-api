@@ -5,8 +5,9 @@ import { AddAccountModel } from '@/domain/usecases/add-account/add-account'
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 import { AccountModel } from '@/domain/models/account'
 import { ObjectId } from 'mongodb'
+import { LoadAccountByToken } from '@/presentation/middlewares/auth-middleware-protocols'
 
-export class AccountMongoRepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository {
+export class AccountMongoRepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByToken {
   async add (accountData: AddAccountModel): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection('accounts')
     const result = await accountCollection.insertOne(accountData)
@@ -25,5 +26,18 @@ export class AccountMongoRepository implements AddAccountRepository, LoadAccount
     const objectId = new ObjectId(id)
     const accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.updateOne({ _id: objectId }, { $set: { accessToken: token } })
+  }
+
+  async loadByToken (token: string, role?: string): Promise<AccountModel> {
+    const accountCollection = await MongoHelper.getCollection('accounts')
+    const account = await accountCollection.findOne({
+      accessToken: token,
+      $or: [{
+        role
+      }, {
+        role: 'admin'
+      }]
+    })
+    return account && MongoHelper.map(account)
   }
 }
