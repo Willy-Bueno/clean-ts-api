@@ -13,6 +13,7 @@
     "test:verbose": "jest --passWithNoTests",
     "test:unit": "yarn test --watch -c jest-unit-config.ts",
     "test:integration": "yarn test --watch -c jest-integration-config.ts",
+    "test:integration:verbose": "jest --passWithNoTests --watch -c jest-integration-config.ts",
     "test:staged": "yarn test --findRelatedTests",
     "test:ci": "yarn test --coverage",
     "prepare": "husky install"
